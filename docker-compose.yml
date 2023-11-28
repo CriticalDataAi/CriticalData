@@ -1,0 +1,48 @@
+version: "3.4"
+
+services:
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    environment:
+      - PORT=3001
+      - JWT_SECRET=tmp_secret
+      - DB_TYPE=postgres
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DB=postgres
+      - PG_PORT=5432
+      - PG_HOST=db
+    depends_on:
+      - db
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    environment:
+      - PORT=3000
+      - JWT_SECRET=tmp_secret
+  db:
+    container_name: db
+    image: postgres:12
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5439:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata: {}
