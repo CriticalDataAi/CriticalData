@@ -38,9 +38,9 @@ export class DataSourcesController {
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body() user: DataSource,
+    @Body() dataSource: DataSource,
   ): Promise<any> {
-    return this.dataSourceService.update(id, user);
+    return this.dataSourceService.update(id, dataSource);
   }
 
   @Delete(':id')

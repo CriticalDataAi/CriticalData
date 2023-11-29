@@ -9,7 +9,7 @@ export const DataSourceAPI = {
       signal: cancel ? cancelApiObject[this.get.name].handleRequestCancellation().signal : undefined,
     })
 
-    return response.data.dataSource
+    return response.data
   },
   getAll: async function (cancel = false) {
     const response = await api.request({
@@ -18,7 +18,7 @@ export const DataSourceAPI = {
       signal: cancel ? cancelApiObject[this.getAll.name].handleRequestCancellation().signal : undefined,
     })
 
-    return response.data.products
+    return response.data
   },
   search: async function (name, cancel = false) {
     const response = await api.request({
@@ -30,15 +30,36 @@ export const DataSourceAPI = {
       signal: cancel ? cancelApiObject[this.search.name].handleRequestCancellation().signal : undefined,
     })
 
-    return response.data.products
+    return response.data
   },
   create: async function (dataSource, cancel = false) {
-    await api.request({
+    const response = await api.request({
       url: `/data-sources`,
       method: "POST",
       data: dataSource,
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
-    })
+    });
+    
+    return response;
+  },
+  edit: async function (id, dataSource, cancel = false) {
+    const response = await api.request({
+      url: `/data-sources/${id}`,
+      method: "PUT",
+      data: dataSource,
+      signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
+    });
+    
+    return response;
+  },
+  delete: async function (id, cancel = false) {
+    const response = await api.request({
+      url: `/data-sources/${id}`,
+      method: "DELETE",
+      signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
+    });
+    
+    return response;
   },
 }
 

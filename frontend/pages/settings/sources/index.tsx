@@ -8,7 +8,6 @@ import Footer from '@/components/Footer';
 
 import DataTable from '@/components/DataTable';
 import { DataSourceAPI } from '@/apis/DataSourceAPI';
-// import { DataSourceModel } from '@/models/DataSourceModel';
 
 const DataSourceModel = [
   { name: 'type', type: 'string' },
@@ -19,11 +18,10 @@ const DataSourceModel = [
 ];
 
 function DataSources() {
-  const [dataSources, setDataSources] = useState();
+  const [dataSources, setDataSources] = useState([]);
 
   useEffect(() => {
     DataSourceAPI.getAll().then((dataSources) => {
-      // response handling
       setDataSources(dataSources);
     });
   }, []);
@@ -47,14 +45,14 @@ function DataSources() {
           justifyContent="center"
           alignItems="stretch"
           spacing={3}
-        >
-          <Grid item xs={12}>
-            <DataTable
-              title="Data Sources"
-              model={DataSourceModel}
-              data={dataSources}
-            />
-          </Grid>
+        ></Grid>
+        <Grid item xs={12}>
+          <DataTable
+            title="Data Sources"
+            model={DataSourceModel}
+            data={dataSources}
+            modelAPI={DataSourceAPI}
+          />
         </Grid>
       </Container>
       <Footer />

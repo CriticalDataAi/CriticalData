@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import PageTitle from '@/components/PageTitle';
@@ -19,11 +20,22 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import { DataSourceAPI } from '@/apis/DataSourceAPI';
+import { DataSourceModel } from '@/models/DataSourceModel';
 
 import Footer from '@/components/Footer';
 
-function CreateDataSources() {
+function EditDataSources() {
   const router = useRouter();
+  const [dataSource, setDataSource] = useState<DataSourceModel>();
+
+  const { id } = router.query;
+
+  useEffect(() => {
+    id &&
+      DataSourceAPI.get(id).then((dataSource) => {
+        setDataSource(dataSource);
+      });
+  }, [id]);
 
   const validationSchema = yup.object({
     type: yup.string().required('Type is required'),
@@ -35,17 +47,19 @@ function CreateDataSources() {
   });
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      type: 'PostgreSQL',
-      url: '',
-      username: '',
-      password: '',
-      database: '',
-      port: ''
+      id: dataSource?.id || '',
+      type: dataSource?.type || '',
+      url: dataSource?.url || '',
+      username: dataSource?.username || '',
+      password: dataSource?.password || '',
+      database: dataSource?.database || '',
+      port: dataSource?.port || ''
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ type, url, username, password, database, port }) => {
-      DataSourceAPI.create({
+    onSubmit: async ({ id, type, url, username, password, database, port }) => {
+      DataSourceAPI.edit(id, {
         type,
         url,
         username,
@@ -82,7 +96,7 @@ function CreateDataSources() {
         ></Grid>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title="Create Data Sources" />
+            <CardHeader title="Edit Data Source" />
             <Divider />
             <form onSubmit={formik.handleSubmit}>
               <CardContent>
@@ -145,7 +159,7 @@ function CreateDataSources() {
               <Divider />
               <CardContent>
                 <Button type="submit" variant="contained">
-                  Create
+                  Edit
                 </Button>
               </CardContent>
             </form>
@@ -157,6 +171,6 @@ function CreateDataSources() {
   );
 }
 
-CreateDataSources.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
+EditDataSources.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
 
-export default CreateDataSources;
+export default EditDataSources;

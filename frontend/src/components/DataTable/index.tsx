@@ -17,21 +17,41 @@ import {
   useTheme,
   CardHeader
 } from '@mui/material';
+import { useRouter } from 'next/router';
 
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+
+import DeleteConfirmDialog from './delete-dialog';
 
 interface DataTableProps {
   title: string;
   model: any[];
   data?: any[];
+  modelAPI: {};
 }
 
-const DataTable: FC<DataTableProps> = ({ title, model, data }) => {
-  const [selectedData, setSelectedData] = useState<string[]>([]);
+const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
+  const { title, model, data, modelAPI } = props;
+
+  const [selectedData, setSelectedData] = useState<any[]>([]);
   // const selectedBulkActions = selectedData.length > 0;
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deleteSelected, setDeleteSelected] = useState();
+
+  const handleClickOpenDialog = (id) => {
+    setDeleteSelected(id);
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
+  const router = useRouter();
 
   const handleSelectAllData = (event: ChangeEvent<HTMLInputElement>): void => {
     setSelectedData(event.target.checked ? data.map((row) => row.id) : []);
@@ -66,11 +86,6 @@ const DataTable: FC<DataTableProps> = ({ title, model, data }) => {
 
   return (
     <Card>
-      {/* {selectedBulkActions && (
-        <Box flex={1} p={2}>
-          <BulkActions />
-        </Box>
-      )} */}
       <CardHeader title={title} />
       <Divider />
       <TableContainer>
@@ -121,6 +136,12 @@ const DataTable: FC<DataTableProps> = ({ title, model, data }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => {
+                          router.push({
+                            pathname: router.pathname + '/edit',
+                            query: { id: row.id }
+                          });
+                        }}
                       >
                         <EditTwoToneIcon fontSize="small" />
                       </IconButton>
@@ -133,6 +154,9 @@ const DataTable: FC<DataTableProps> = ({ title, model, data }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => {
+                          handleClickOpenDialog(row.id);
+                        }}
                       >
                         <DeleteTwoToneIcon fontSize="small" />
                       </IconButton>
@@ -155,6 +179,12 @@ const DataTable: FC<DataTableProps> = ({ title, model, data }) => {
           rowsPerPageOptions={[5, 10, 25, 30]}
         />
       </Box>
+      <DeleteConfirmDialog
+        open={openDialog}
+        onClose={handleClose}
+        deleteSelected={deleteSelected}
+        modelAPI={modelAPI}
+      />
     </Card>
   );
 };
