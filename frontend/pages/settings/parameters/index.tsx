@@ -92,7 +92,7 @@ function Parameters() {
               alignItems="center"
             >
               <List component={Box} display="flex" flexGrow={1}>
-                <ListItem sx={{ p: 3 }}>
+                <ListItem sx={{ p: 3, width: '25%' }}>
                   <ListItemText
                     primaryTypographyProps={{
                       variant: 'h5',
@@ -106,7 +106,7 @@ function Parameters() {
                     secondary="You can change your api key here"
                   />
                 </ListItem>
-                <ListItem sx={{ flexGrow: 1 }}>
+                <ListItem sx={{ width: '50%' }}>
                   <TextField
                     required
                     label="ChatGPT API Key"
@@ -119,7 +119,7 @@ function Parameters() {
                 </ListItem>
 
                 {showEditGPTKey && (
-                  <ListItem className="lg-col-2">
+                  <ListItem sx={{ width: '25%' }}>
                     <Button
                       variant="contained"
                       startIcon={<EditTwoToneIcon />}
@@ -130,14 +130,14 @@ function Parameters() {
                   </ListItem>
                 )}
                 {!!!showEditGPTKey && (
-                  <ListItem>
+                  <ListItem sx={{ width: '12.5%' }}>
                     <Button variant="contained" onClick={handleCancelGPTKey}>
                       Cancel
                     </Button>
                   </ListItem>
                 )}
                 {!!!showEditGPTKey && (
-                  <ListItem>
+                  <ListItem sx={{ width: '12.5%' }}>
                     <Button variant="contained" onClick={handleSubmitGPTKey}>
                       Save
                     </Button>
