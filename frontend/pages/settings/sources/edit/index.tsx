@@ -83,7 +83,6 @@ function EditDataSources() {
         <PageTitle
           heading="Data Sources"
           subHeading="Manage your data sources"
-          docs="/settings/sources/create"
         />
       </PageTitleWrapper>
       <Container maxWidth="lg">

@@ -1,4 +1,4 @@
-import { FC, ChangeEvent, useState } from 'react';
+import { FC, ChangeEvent, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Tooltip,
@@ -24,18 +24,26 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 
 import DeleteConfirmDialog from './delete-dialog';
 
+interface ModelAPI {
+  create: Function;
+  edit: Function;
+  delete: Function;
+  get: Function;
+  getAll: Function;
+}
+
 interface DataTableProps {
   title: string;
   model: any[];
-  data?: any[];
-  modelAPI: {};
+  modelAPI: ModelAPI;
 }
 
 const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
-  const { title, model, data, modelAPI } = props;
+  const { title, model, modelAPI } = props;
 
+  const [data, setData] = useState<any[]>([]);
   const [selectedData, setSelectedData] = useState<any[]>([]);
-  // const selectedBulkActions = selectedData.length > 0;
+
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
 
@@ -52,6 +60,12 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
   };
 
   const router = useRouter();
+
+  useEffect(() => {
+    modelAPI.getAll().then((data) => {
+      setData(data);
+    });
+  }, [openDialog]);
 
   const handleSelectAllData = (event: ChangeEvent<HTMLInputElement>): void => {
     setSelectedData(event.target.checked ? data.map((row) => row.id) : []);
@@ -190,11 +204,12 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
 };
 
 DataTable.propTypes = {
-  data: PropTypes.array.isRequired
+  title: PropTypes.string.isRequired,
+  model: PropTypes.array.isRequired
 };
 
 DataTable.defaultProps = {
-  data: []
+  title: ''
 };
 
 export default DataTable;

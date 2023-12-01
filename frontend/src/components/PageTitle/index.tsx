@@ -29,15 +29,17 @@ const PageTitle: FC<PageTitleProps> = ({
         <Typography variant="subtitle2">{subHeading}</Typography>
       </Grid>
       <Grid item>
-        <Button
-          href={docs}
-          rel="noopener noreferrer"
-          sx={{ mt: { xs: 2, md: 0 } }}
-          variant="contained"
-          startIcon={<AddTwoToneIcon fontSize="small" />}
-        >
-          Create {heading}
-        </Button>
+        {docs && (
+          <Button
+            href={docs}
+            rel="noopener noreferrer"
+            sx={{ mt: { xs: 2, md: 0 } }}
+            variant="contained"
+            startIcon={<AddTwoToneIcon fontSize="small" />}
+          >
+            Create {heading}
+          </Button>
+        )}
       </Grid>
     </Grid>
   );

@@ -209,17 +209,17 @@ function SidebarMenu() {
                 </NextLink>
               </ListItem>
               <ListItem component="div">
-                <NextLink href="/settings/outputs" passHref>
+                <NextLink href="/settings/parameters" passHref>
                   <Button
                     className={
-                      currentRoute === '/settings/outputs' ? 'active' : ''
+                      currentRoute === '/settings/parameters' ? 'active' : ''
                     }
                     disableRipple
                     component="a"
                     onClick={closeSidebar}
                     startIcon={<MmsTwoToneIcon />}
                   >
-                    Outputs
+                    Parameters
                   </Button>
                 </NextLink>
               </ListItem>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import PageTitle from '@/components/PageTitle';
@@ -18,14 +18,6 @@ const DataSourceModel = [
 ];
 
 function DataSources() {
-  const [dataSources, setDataSources] = useState([]);
-
-  useEffect(() => {
-    DataSourceAPI.getAll().then((dataSources) => {
-      setDataSources(dataSources);
-    });
-  }, []);
-
   return (
     <>
       <Head>
@@ -50,7 +42,6 @@ function DataSources() {
           <DataTable
             title="Data Sources"
             model={DataSourceModel}
-            data={dataSources}
             modelAPI={DataSourceAPI}
           />
         </Grid>
