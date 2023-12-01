@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DataSourcesModule } from './data-sources/data-sources.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { DataSourcesModule } from './data-sources/data-sources.module';
+import { ParametersModule } from './parameters/parameters.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    DataSourcesModule,
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
       host: process.env.PG_HOST,
@@ -19,6 +19,8 @@ import { ConfigModule } from '@nestjs/config';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    DataSourcesModule,
+    ParametersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
