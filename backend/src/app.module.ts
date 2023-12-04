@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { DataSourcesModule } from './data-sources/data-sources.module';
 import { ParametersModule } from './parameters/parameters.module';
+import { TrainingStatementsModule } from './training_statements/training_statements.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ParametersModule } from './parameters/parameters.module';
     }),
     DataSourcesModule,
     ParametersModule,
+    TrainingStatementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
