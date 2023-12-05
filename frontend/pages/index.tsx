@@ -34,7 +34,7 @@ function AskQuestion() {
   return (
     <>
       <Head>
-        <title>Data Sources</title>
+        <title>Ask Question</title>
       </Head>
       <PageTitleWrapper>
         <PageTitle
@@ -78,7 +78,9 @@ function AskQuestion() {
               <SearchIcon />
             </IconButton>
           </Paper>
-          <Card>{questionResponse}</Card>
+          <Card sx={{ p: 3, whiteSpace: 'pre-line;' }}>
+            <pre>{questionResponse}</pre>
+          </Card>
         </Card>
       </Container>
       <Footer />

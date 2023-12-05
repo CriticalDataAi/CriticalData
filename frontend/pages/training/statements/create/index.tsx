@@ -75,7 +75,7 @@ function CreateTrainingStatements() {
               <CardContent>
                 <Box
                   sx={{
-                    '& .MuiTextField-root': { m: 1, width: '25ch' }
+                    '& .MuiTextField-root': { m: 1, width: '98.5%' }
                   }}
                 >
                   <div>
@@ -85,11 +85,14 @@ function CreateTrainingStatements() {
                       name="context"
                       onChange={formik.handleChange}
                       value={formik.values.context}
+                      sx={{ width: '98.5%' }}
                     />
                   </div>
                   <div>
                     <TextField
                       required
+                      multiline
+                      rows={20}
                       label="Query"
                       name="query"
                       onChange={formik.handleChange}

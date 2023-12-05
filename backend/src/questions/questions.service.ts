@@ -35,17 +35,17 @@ export class QuestionsService {
     const fewShot = this.parseFewShots(statements);
     const prompt = this.preparePrompt(fewShot, question);
 
-    const response = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      model: 'gpt-3.5-turbo',
-    });
-    return response.choices[0].message.content;
-    // return fewShot;
+    // const response = await openai.chat.completions.create({
+    //   messages: [
+    //     {
+    //       role: 'user',
+    //       content: prompt,
+    //     },
+    //   ],
+    //   model: 'gpt-3.5-turbo',
+    // });
+    // return response.choices[0].message.content;
+    return fewShot;
   }
 
   preparePrompt(fewshot, question) {
@@ -83,15 +83,15 @@ User request: ${question}`;
   }
 
   parseFewShots(statements) {
-    let fewShot = '';
+    let fewShot = ``;
     let exampleCounter = 1;
 
     statements.forEach((statement) => {
-      fewShot += `
--------------- Exemple ${exampleCounter}:
+      fewShot += `-------------- Exemple ${exampleCounter}:
 User: ${statement.context}
 System: 
 ${statement.query}
+
 `;
       exampleCounter = exampleCounter + 1;
     });
