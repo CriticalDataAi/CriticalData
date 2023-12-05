@@ -51,7 +51,7 @@ function AskQuestion() {
           alignItems="stretch"
           spacing={3}
         ></Grid>
-        <Card sx={{ minHeight: '600px' }}>
+        <Card>
           <Paper
             sx={{
               p: '2px 4px',
@@ -78,7 +78,7 @@ function AskQuestion() {
               <SearchIcon />
             </IconButton>
           </Paper>
-          <Card sx={{ p: 3, whiteSpace: 'pre-line;' }}>
+          <Card sx={{ p: 3, whiteSpace: 'pre-line;', minHeight: '480px' }}>
             <pre>{questionResponse}</pre>
           </Card>
         </Card>
