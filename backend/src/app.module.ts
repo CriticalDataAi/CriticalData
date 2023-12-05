@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DataSourcesModule } from './data-sources/data-sources.module';
 import { ParametersModule } from './parameters/parameters.module';
 import { TrainingStatementsModule } from './training_statements/training_statements.module';
+import { QuestionsModule } from './questions/questions.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TrainingStatementsModule } from './training_statements/training_stateme
     DataSourcesModule,
     ParametersModule,
     TrainingStatementsModule,
+    QuestionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
