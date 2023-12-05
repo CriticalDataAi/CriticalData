@@ -87,7 +87,7 @@ function CreateDataSources() {
               <CardContent>
                 <Box
                   sx={{
-                    '& .MuiTextField-root': { m: 1, width: '25ch' }
+                    '& .MuiTextField-root': { m: 1, width: '98.5%' }
                   }}
                 >
                   <div>
