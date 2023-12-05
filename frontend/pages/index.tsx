@@ -1,89 +1,91 @@
-import {
-  Typography,
-  Box,
-  Card,
-  Container,
-  Button,
-  styled
-} from '@mui/material';
-import type { ReactElement } from 'react';
-import BaseLayout from 'src/layouts/BaseLayout';
-
-import Link from 'src/components/Link';
+import React, { useState } from 'react';
 import Head from 'next/head';
+import SidebarLayout from '@/layouts/SidebarLayout';
+import PageTitle from '@/components/PageTitle';
+import PageTitleWrapper from '@/components/PageTitleWrapper';
+import {
+  Grid,
+  Container,
+  Card,
+  Paper,
+  IconButton,
+  InputBase
+} from '@mui/material';
+import Footer from '@/components/Footer';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 
-import Logo from 'src/components/LogoSign';
-import Hero from 'src/content/Overview/Hero';
+import { QuestionAPI } from '@/apis/QuestionAPI';
 
-const HeaderWrapper = styled(Card)(
-  ({ theme }) => `
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height: ${theme.spacing(10)};
-  margin-bottom: ${theme.spacing(10)};
-`
-);
+function AskQuestion() {
+  const [writtenQuestion, setWrittenQuestion] = useState<string>('');
+  const [questionResponse, setQuestionResponse] = useState<string>('');
 
-const OverviewWrapper = styled(Box)(
-  ({ theme }) => `
-    overflow: auto;
-    background: ${theme.palette.common.white};
-    flex: 1;
-    overflow-x: hidden;
-`
-);
+  const handleQuestionChange = (e) => {
+    setWrittenQuestion(e.target.value);
+  };
 
-function Overview() {
+  const handleQuestionSubmit = async () => {
+    QuestionAPI.search(writtenQuestion).then((data) => {
+      setQuestionResponse(data);
+    });
+  };
+
   return (
-    <OverviewWrapper>
+    <>
       <Head>
-        <title>Tokyo Free Black NextJS Typescript Admin Dashboard</title>
+        <title>Data Sources</title>
       </Head>
-      <HeaderWrapper>
-        <Container maxWidth="lg">
-          <Box display="flex" alignItems="center">
-            <Logo />
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              flex={1}
-            >
-              <Box />
-              <Box>
-                <Button
-                  component={Link}
-                  href="/dashboards/tasks"
-                  variant="contained"
-                  sx={{ ml: 2 }}
-                >
-                  Live Preview
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        </Container>
-      </HeaderWrapper>
-      <Hero />
-      <Container maxWidth="lg" sx={{ mt: 8 }}>
-        <Typography textAlign="center" variant="subtitle1">
-          Crafted by{' '}
-          <Link
-            href="https://bloomui.com"
-            target="_blank"
-            rel="noopener noreferrer"
+      <PageTitleWrapper>
+        <PageTitle
+          heading="Ask your Question"
+          subHeading="Input your business question here and wait for the answer"
+          docs=""
+        />
+      </PageTitleWrapper>
+      <Container maxWidth="lg">
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="stretch"
+          spacing={3}
+        ></Grid>
+        <Card sx={{ minHeight: '600px' }}>
+          <Paper
+            sx={{
+              p: '2px 4px',
+              display: 'flex',
+              alignItems: 'center',
+              width: 'fullWidth'
+            }}
           >
-            BloomUI.com
-          </Link>
-        </Typography>
+            <IconButton sx={{ p: '10px' }} aria-label="menu">
+              <MenuIcon />
+            </IconButton>
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="Ask Question"
+              inputProps={{ 'aria-label': 'search google maps' }}
+              onChange={handleQuestionChange}
+            />
+            <IconButton
+              type="button"
+              sx={{ p: '10px' }}
+              aria-label="search"
+              onClick={handleQuestionSubmit}
+            >
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+          <Card>{questionResponse}</Card>
+        </Card>
       </Container>
-    </OverviewWrapper>
+      <Footer />
+    </>
   );
 }
 
-export default Overview;
+AskQuestion.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
 
-Overview.getLayout = function getLayout(page: ReactElement) {
-  return <BaseLayout>{page}</BaseLayout>;
-};
+export default AskQuestion;

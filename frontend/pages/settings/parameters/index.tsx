@@ -22,7 +22,6 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ParameterAPI } from '@/apis/ParameterAPI';
 
 function Parameters() {
-  const [chatGPTKey, setChatGPTKey] = useState([]);
   const [disableEditGPTKey, setDisableEditGPTKey] = useState<boolean>(true);
   const [showEditGPTKey, setShowEditGPTKey] = useState<boolean>(true);
   const [updatedGPTKey, setUpdatedGPTKey] = useState<string>('APIKEY');
@@ -53,7 +52,6 @@ function Parameters() {
 
   useEffect(() => {
     ParameterAPI.getParameter('chatgpt_key').then((data) => {
-      //   setChatGPTKey(data.value);
       setUpdatedGPTKey(data.value);
     });
   }, []);
