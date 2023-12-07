@@ -20,6 +20,16 @@ The repo is separated in folders, each with a module that must be executed indep
   docker compose up
 ```
 
+If you want to develop on the project, you will also need to install project dependencies:
+
+```bash
+  cd backend
+  npm install
+  cd ..
+  cd frontend
+  npm install
+```
+
 After the project builds and the containers are running, the frontend will be accessible on the link: http://localhost:3000/
 
 ## Setup
