@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TrainingStatement } from 'src/training_statements/training_statement.entity';
 import { Parameter } from 'src/parameters/parameter.entity';
+import { DataSource } from 'src/data-sources/data-source.entity';
 import OpenAI from 'openai';
+
+import { DBMetadataExtractor } from 'src/common/utils/db-metadata-extractor';
 
 @Injectable()
 export class QuestionsService {
@@ -12,6 +15,8 @@ export class QuestionsService {
     private trainingStatementRepository: Repository<TrainingStatement>,
     @InjectRepository(Parameter)
     private parameterRepository: Repository<Parameter>,
+    @InjectRepository(DataSource)
+    private dataSourceRepository: Repository<DataSource>,
   ) {}
 
   async askQuestion(question) {
@@ -19,56 +24,50 @@ export class QuestionsService {
     const parameter = await this.parameterRepository.findOne({
       where: { type: 'chatgpt_key' },
     });
+    const dataSource = await this.dataSourceRepository.find({ take: 1 });
 
     return await this.chatGptCall(
       parameter.value,
       trainingStatements,
       question,
+      dataSource[0],
     );
   }
 
-  async chatGptCall(chatGptKey, statements, question) {
+  async chatGptCall(chatGptKey, statements, question, dataSource) {
     const openai = new OpenAI({
       apiKey: chatGptKey,
     });
 
-    const fewShot = this.parseFewShots(statements);
-    const prompt = this.preparePrompt(fewShot, question);
+    const dbMetadataExtractor = new DBMetadataExtractor(
+      dataSource.type,
+      dataSource.url,
+      dataSource.username,
+      dataSource.password,
+      Number(dataSource.port),
+      dataSource.database,
+    );
 
-    // const response = await openai.chat.completions.create({
-    //   messages: [
-    //     {
-    //       role: 'user',
-    //       content: prompt,
-    //     },
-    //   ],
-    //   model: 'gpt-3.5-turbo',
-    // });
-    // return response.choices[0].message.content;
-    return fewShot;
+    const metadata = await dbMetadataExtractor.extractMetadata();
+
+    const fewShot = this.parseFewShots(statements);
+    const prompt = this.preparePrompt(fewShot, question, metadata);
+
+    const response = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+    return response.choices[0].message.content;
+    // return fewShot;
   }
 
-  preparePrompt(fewshot, question) {
+  preparePrompt(fewshot, question, sqlTables) {
     //Current strategy adapted from https://www.kdnuggets.com/leveraging-gpt-models-to-transform-natural-language-to-sql-queries
-    //hardcoded until metadata extracted from database
-    const sqlTables = `
-        CREATE TABLE PRODUCTS (
-            product_name VARCHAR(100),
-            price DECIMAL(10, 2),
-            discount DECIMAL(5, 2),
-            product_type VARCHAR(50),
-            rating DECIMAL(3, 1),
-            product_id VARCHAR(100)
-        );
-
-        CREATE TABLE ORDERS (
-            order_number INT PRIMARY KEY,
-            order_creation DATE,
-            order_status VARCHAR(50),
-            product_id VARCHAR(100)
-        );
-    `;
-
     const prompt = `
 Given the following SQL tables, your job is to provide the required SQL tables
 to fulfill any user request.

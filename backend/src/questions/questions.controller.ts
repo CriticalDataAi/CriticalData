@@ -7,7 +7,6 @@ export class QuestionsController {
 
   @Get()
   async askQuestion(@Query('question') question) {
-    console.log(question);
     return this.questionsService.askQuestion(question);
   }
 }
