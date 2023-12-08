@@ -18,8 +18,14 @@ export class DataSource {
   password: string;
 
   @Column()
-  database: string;
+  database?: string;
 
   @Column()
   port: string;
+
+  @Column({ nullable: true })
+  schema?: string;
+
+  @Column({ nullable: true })
+  tablesToScan?: string;
 }

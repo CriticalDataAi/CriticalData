@@ -9,16 +9,18 @@ export class PostgreSQLMetadataExtractor implements MetadataExtractor {
   port: number;
   database: string;
   schema: string;
+  tablesToScan: string;
 
   connection;
 
-  constructor(host, username, password, port, database, schema) {
+  constructor(host, username, password, port, database, schema, tablesToScan) {
     this.host = host;
     this.username = username;
     this.password = password;
     this.port = port;
     this.database = database;
     this.schema = schema == '' ? 'public' : schema;
+    this.tablesToScan = tablesToScan;
   }
 
   async connect() {
@@ -37,7 +39,9 @@ export class PostgreSQLMetadataExtractor implements MetadataExtractor {
   async generateMetadata() {
     await this.connect();
 
-    const ddlColumnRows = await this.connection.query(pgMetadataQuery);
+    const ddlColumnRows = await this.connection.query(
+      this.generateMetadataSQLExtract(),
+    );
     return this.parseRowsToDDL(ddlColumnRows);
   }
 
@@ -78,6 +82,26 @@ export class PostgreSQLMetadataExtractor implements MetadataExtractor {
       : '';
 
     return `${columnData.column_name} ${columnData.udt_name} ${columnDefault} ${isNullable} ${foreignRelation}`;
+  }
+
+  generateMetadataSQLExtract() {
+    const schemaSQL = this.schema
+      ? `\nand c.table_schema = '${this.schema}'`
+      : '';
+    const tablesToScanSQL = this.tablesToScan
+      ? `\nand c.table_name in (${this.columnArrayToSQLString()})`
+      : '';
+
+    return (
+      pgMetadataQuery +
+      schemaSQL +
+      tablesToScanSQL +
+      `\norder by 1, c.ordinal_position, 2`
+    );
+  }
+
+  columnArrayToSQLString() {
+    return `'` + this.tablesToScan.replaceAll(', ', `','`) + `'`;
   }
 }
 

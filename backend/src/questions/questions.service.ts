@@ -46,6 +46,8 @@ export class QuestionsService {
       dataSource.password,
       Number(dataSource.port),
       dataSource.database,
+      dataSource.schema,
+      dataSource.tablesToScan,
     );
 
     const metadata = await dbMetadataExtractor.extractMetadata();
@@ -63,7 +65,7 @@ export class QuestionsService {
       model: 'gpt-3.5-turbo',
     });
     return response.choices[0].message.content;
-    // return fewShot;
+    // return metadata;
   }
 
   preparePrompt(fewshot, question, sqlTables) {

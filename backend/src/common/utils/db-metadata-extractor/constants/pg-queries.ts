@@ -23,8 +23,7 @@ from information_schema.columns c
 	left join fk on fk.table_schema = c.table_schema 
 				and fk.table_name = c.table_name 
 				and fk.column_name = c.column_name 
-where c.table_schema = 'public'
-order by 1, c.ordinal_position, 2
+where 1 = 1 
 `;
 
 export default pgMetadataQuery;

@@ -9,6 +9,7 @@ export class DBMetadataExtractor {
   port: number;
   database: string;
   schema: string;
+  tablesToScan: string;
 
   metadataExtractor;
 
@@ -20,6 +21,7 @@ export class DBMetadataExtractor {
     port,
     database = '',
     schema = '',
+    tablesToScan = '',
   ) {
     this.databaseType = databaseType;
 
@@ -29,6 +31,7 @@ export class DBMetadataExtractor {
     this.port = port;
     this.database = database;
     this.schema = schema;
+    this.tablesToScan = tablesToScan;
 
     switch (this.databaseType) {
       case 'PostgreSQL': {
@@ -39,6 +42,7 @@ export class DBMetadataExtractor {
           this.port,
           this.database,
           this.schema,
+          this.tablesToScan,
         );
         break;
       }
