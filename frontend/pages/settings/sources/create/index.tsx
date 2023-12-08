@@ -10,10 +10,14 @@ import {
   CardHeader,
   CardContent,
   Divider,
-  Button
+  Button,
+  FormControl,
+  MenuItem
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -41,17 +45,30 @@ function CreateDataSources() {
       username: '',
       password: '',
       database: '',
-      port: ''
+      port: '',
+      schema: '',
+      tablesToScan: ''
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ type, url, username, password, database, port }) => {
+    onSubmit: async ({
+      type,
+      url,
+      username,
+      password,
+      database,
+      port,
+      schema,
+      tablesToScan
+    }) => {
       DataSourceAPI.create({
         type,
         url,
         username,
         password,
         database,
-        port
+        port,
+        schema,
+        tablesToScan
       });
 
       router.push({
@@ -91,13 +108,17 @@ function CreateDataSources() {
                   }}
                 >
                   <div>
-                    <TextField
-                      required
-                      label="Type"
-                      name="type"
-                      onChange={formik.handleChange}
-                      value={formik.values.type}
-                    />
+                    <FormControl fullWidth sx={{ p: 1 }}>
+                      <InputLabel>Type</InputLabel>
+                      <Select
+                        value={formik.values.type}
+                        label="Age"
+                        name="type"
+                        onChange={formik.handleChange}
+                      >
+                        <MenuItem value={'PostgreSQL'}>PostgreSQL</MenuItem>
+                      </Select>
+                    </FormControl>
                     <TextField
                       required
                       label="URL"
@@ -137,6 +158,24 @@ function CreateDataSources() {
                       name="port"
                       onChange={formik.handleChange}
                       value={formik.values.port}
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      required
+                      label="Schema"
+                      name="schema"
+                      onChange={formik.handleChange}
+                      value={formik.values.schema}
+                    />
+                    <TextField
+                      required
+                      label="Tables To Scan"
+                      name="tablesToScan"
+                      multiline
+                      rows={6}
+                      onChange={formik.handleChange}
+                      value={formik.values.tablesToScan}
                     />
                   </div>
                 </Box>

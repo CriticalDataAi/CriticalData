@@ -8,4 +8,6 @@ export interface DataSourceModel {
   password: string;
   database: string;
   port: number;
+  schema: string;
+  tablesToScan: string;
 }

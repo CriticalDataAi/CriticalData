@@ -14,7 +14,9 @@ const DataSourceModel = [
   { name: 'url', type: 'string' },
   { name: 'username', type: 'string' },
   { name: 'port', type: 'string' },
-  { name: 'database', type: 'string' }
+  { name: 'database', type: 'string' },
+  { name: 'schema', type: 'string' },
+  { name: 'tablesToScan', type: 'string' }
 ];
 
 function DataSources() {
