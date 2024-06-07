@@ -16,10 +16,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { QuestionAPI } from '@/apis/QuestionAPI';
+import JsonTable from '@/components/JsonTable'
 
 function AskQuestion() {
   const [writtenQuestion, setWrittenQuestion] = useState<string>('');
-  const [questionResponse, setQuestionResponse] = useState<string>('');
+  const [submitedQuestion, setSubmitedQuestion] = useState<string>('');
+  const [questionResponse, setQuestionResponse] = useState({});
 
   const handleQuestionChange = (e) => {
     setWrittenQuestion(e.target.value);
@@ -27,7 +29,9 @@ function AskQuestion() {
 
   const handleQuestionSubmit = async () => {
     QuestionAPI.search(writtenQuestion).then((data) => {
-      setQuestionResponse(data);
+      setQuestionResponse(data['data']);
+      setSubmitedQuestion(writtenQuestion);
+      setWrittenQuestion('');
     });
   };
 
@@ -67,6 +71,7 @@ function AskQuestion() {
               sx={{ ml: 1, flex: 1 }}
               placeholder="Ask Question"
               inputProps={{ 'aria-label': 'search google maps' }}
+              value={writtenQuestion}
               onChange={handleQuestionChange}
             />
             <IconButton
@@ -79,7 +84,8 @@ function AskQuestion() {
             </IconButton>
           </Paper>
           <Card sx={{ p: 3, whiteSpace: 'pre-line;', minHeight: '480px' }}>
-            <pre>{questionResponse}</pre>
+            <h2>{submitedQuestion}</h2>
+            <JsonTable rows={questionResponse} />
           </Card>
         </Card>
       </Container>

@@ -101,7 +101,7 @@ export class PostgreSQLMetadataExtractor implements MetadataExtractor {
   }
 
   columnArrayToSQLString() {
-    return `'` + this.tablesToScan.replaceAll(', ', `','`) + `'`;
+    return `'` + this.tablesToScan.replaceAll(', ', `','`).replaceAll(',', `','`) + `'`;
   }
 }
 

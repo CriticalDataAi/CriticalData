@@ -7,6 +7,7 @@ import { DataSource } from 'src/data-sources/data-source.entity';
 import OpenAI from 'openai';
 
 import { DBMetadataExtractor } from 'src/common/utils/db-metadata-extractor';
+import { DBQueryRunner } from 'src/common/utils/db-query-runner';
 
 @Injectable()
 export class QuestionsService {
@@ -26,12 +27,16 @@ export class QuestionsService {
     });
     const dataSource = await this.dataSourceRepository.find({ take: 1 });
 
-    return await this.chatGptCall(
+    const queryStatement = await this.chatGptCall(
       parameter.value,
       trainingStatements,
       question,
       dataSource[0],
     );
+
+    const dataRows = await this.executeStatement(queryStatement, dataSource[0]);
+
+    return {data: dataRows};
   }
 
   async chatGptCall(chatGptKey, statements, question, dataSource) {
@@ -55,17 +60,19 @@ export class QuestionsService {
     const fewShot = this.parseFewShots(statements);
     const prompt = this.preparePrompt(fewShot, question, metadata);
 
-    const response = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      model: 'gpt-3.5-turbo',
-    });
-    return response.choices[0].message.content;
-    // return metadata;
+    // const response = await openai.chat.completions.create({
+    //   messages: [
+    //     {
+    //       role: 'user',
+    //       content: prompt,
+    //     },
+    //   ],
+    //   model: 'gpt-3.5-turbo',
+    // });
+    // return response.choices[0].message.content;
+    // const query response.choices[0].message.content;
+
+    return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
   }
 
   preparePrompt(fewshot, question, sqlTables) {
@@ -98,5 +105,20 @@ ${statement.query}
     });
 
     return fewShot;
+  }
+
+  async executeStatement(queryStatement, dataSource) {
+    const dbQueryRunner = new DBQueryRunner(
+      dataSource.type,
+      dataSource.url,
+      dataSource.username,
+      dataSource.password,
+      Number(dataSource.port),
+      queryStatement,
+      dataSource.database,
+      dataSource.schema,
+    );
+
+    return await dbQueryRunner.executeStatement();
   }
 }
