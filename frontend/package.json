@@ -29,6 +29,7 @@
     "context-api": "0.0.2",
     "date-fns": "2.28.0",
     "formik": "^2.4.5",
+    "jose": "^5.4.0",
     "js-cookie": "^3.0.5",
     "next": "12.1.6",
     "next-images": "1.8.4",

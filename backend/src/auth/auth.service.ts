@@ -36,6 +36,8 @@ export class AuthService {
       access_token: await this.jwtService.sign(payload, {
         secret: process.env.JWT_SECRET,
       }),
+      username: user.name,
+      userrole: user.role,
     };
   }
 

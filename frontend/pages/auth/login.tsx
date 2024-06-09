@@ -66,6 +66,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
         }
 
         Cookies.set("auth-token", data?.access_token);
+        Cookies.set("username", data?.username);
+        Cookies.set("userrole", data?.userrole);
 
         router.push("/");
       } catch {

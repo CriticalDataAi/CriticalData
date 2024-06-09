@@ -23,6 +23,8 @@ import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 
+import Cookies from "js-cookie";
+
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
         padding-left: ${theme.spacing(1)};
@@ -60,9 +62,10 @@ const UserBoxDescription = styled(Typography)(
 
 function HeaderUserbox() {
   const user = {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/1.jpg',
-    jobtitle: 'Data Analyst'
+    name: Cookies.get("username"),
+    // avatar: '/static/images/avatars/1.jpg',
+    avatar: '/static/images/avatars/icon.jpg',
+    jobtitle: Cookies.get("userrole")
   };
 
   const ref = useRef<any>(null);
@@ -79,7 +82,8 @@ function HeaderUserbox() {
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        {/*<Avatar variant="rounded" alt={user.name} src={user.avatar} />*/}
+        <Avatar variant="rounded" alt={user.name} />
         <Hidden mdDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
@@ -106,7 +110,7 @@ function HeaderUserbox() {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+          <Avatar variant="rounded" alt={user.name} />
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
@@ -114,6 +118,7 @@ function HeaderUserbox() {
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>
+        {/*
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
           <NextLink href="/management/profile" passHref>
@@ -136,6 +141,7 @@ function HeaderUserbox() {
           </NextLink>
         </List>
         <Divider />
+        */}
         <Box sx={{ m: 1 }}>
           <Button color="primary" fullWidth>
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
