@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, UseGuards } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('questions')
+@UseGuards(AuthGuard)
 export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
@@ -10,8 +12,4 @@ export class QuestionsController {
     return this.questionsService.askQuestion(question);
   }
 
-  @Post()
-  async slackAskQuestion(@Body('text') question, @Body('user_name') questionUser) {
-    return await this.questionsService.slackAskQuestion(question, questionUser);
-  }
 }

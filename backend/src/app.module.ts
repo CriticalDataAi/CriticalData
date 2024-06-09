@@ -7,6 +7,8 @@ import { DataSourcesModule } from './data-sources/data-sources.module';
 import { ParametersModule } from './parameters/parameters.module';
 import { TrainingStatementsModule } from './training_statements/training_statements.module';
 import { QuestionsModule } from './questions/questions.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { QuestionsModule } from './questions/questions.module';
     ParametersModule,
     TrainingStatementsModule,
     QuestionsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
