@@ -5,11 +5,14 @@ import {
   Put,
   Param,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { ParametersService } from './parameters.service';
 import { Parameter } from './parameter.entity';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('parameters')
+@UseGuards(AuthGuard)
 export class ParametersController {
   constructor(private readonly parametersService: ParametersService) {}
 

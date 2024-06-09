@@ -6,10 +6,11 @@ import { QuestionsService } from './questions.service';
 import { TrainingStatement } from 'src/training_statements/training_statement.entity';
 import { Parameter } from 'src/parameters/parameter.entity';
 import { DataSource } from 'src/data-sources/data-source.entity';
+import { History } from 'src/history/entities/history.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TrainingStatement, Parameter, DataSource]),
+    TypeOrmModule.forFeature([TrainingStatement, Parameter, DataSource, History]),
   ],
   controllers: [QuestionsController, QuestionsSlackController],
   providers: [QuestionsService],

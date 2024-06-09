@@ -1,11 +1,13 @@
 import { api } from "./configs/axiosConfig"
 import { defineCancelApiObject } from "./configs/axiosUtils"
+import getHeader from "./configs/axiosHeader"
 
 export const TrainingStatementAPI = {
   get: async function (id, cancel = false) {
     const response = await api.request({
       url: `/training-statements/${id}`,
       method: "GET",
+      headers: getHeader(),
       signal: cancel ? cancelApiObject[this.get.name].handleRequestCancellation().signal : undefined,
     })
 
@@ -15,6 +17,7 @@ export const TrainingStatementAPI = {
     const response = await api.request({
       url: "/training-statements/",
       method: "GET",
+      headers: getHeader(),
       signal: cancel ? cancelApiObject[this.getAll.name].handleRequestCancellation().signal : undefined,
     })
 
@@ -24,6 +27,7 @@ export const TrainingStatementAPI = {
     const response = await api.request({
       url: "/training-statements",
       method: "GET",
+      headers: getHeader(),
       params: {
         name: name,
       },
@@ -36,6 +40,7 @@ export const TrainingStatementAPI = {
     const response = await api.request({
       url: `/training-statements`,
       method: "POST",
+      headers: getHeader(),
       data: trainingStatement,
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
     });
@@ -46,6 +51,7 @@ export const TrainingStatementAPI = {
     const response = await api.request({
       url: `/training-statements/${id}`,
       method: "PUT",
+      headers: getHeader(),
       data: trainingStatement,
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
     });
@@ -56,6 +62,7 @@ export const TrainingStatementAPI = {
     const response = await api.request({
       url: `/training-statements/${id}`,
       method: "DELETE",
+      headers: getHeader(),
       signal: cancel ? cancelApiObject[this.create.name].handleRequestCancellation().signal : undefined,
     });
     

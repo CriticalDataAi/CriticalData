@@ -1,11 +1,13 @@
 import { api } from "./configs/axiosConfig"
 import { defineCancelApiObject } from "./configs/axiosUtils"
+import getHeader from "./configs/axiosHeader"
 
 export const ParameterAPI = {
   getParameter: async function (parameter, cancel = false) {
     const response = await api.request({
       url: `/parameters`,
       method: "GET",
+      headers: getHeader(),
       params: {
         parameter: parameter
       },
@@ -18,6 +20,7 @@ export const ParameterAPI = {
     const response = await api.request({
       url: `/parameters`,
       method: "PUT",
+      headers: getHeader(),
       params: {
         parameter: parameter
       },

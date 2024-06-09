@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { DataSourcesService } from './data-sources.service';
 import { DataSource } from './data-source.entity';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('data-sources')
+@UseGuards(AuthGuard)
 export class DataSourcesController {
   constructor(private readonly dataSourceService: DataSourcesService) {}
 

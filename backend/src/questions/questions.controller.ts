@@ -9,7 +9,7 @@ export class QuestionsController {
 
   @Get()
   async askQuestion(@Query('question') question) {
-    return this.questionsService.askQuestion(question);
+    return this.questionsService.askQuestion(question, {name: 'API'}, 'api');
   }
 
 }

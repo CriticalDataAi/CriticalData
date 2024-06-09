@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { TrainingStatementsService } from './training_statements.service';
 import { TrainingStatement } from './training_statement.entity';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('training-statements')
+@UseGuards(AuthGuard)
 export class TrainingStatementsController {
   constructor(
     private readonly trainingStatementsService: TrainingStatementsService,

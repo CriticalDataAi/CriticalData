@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { TrainingStatement } from 'src/training_statements/training_statement.entity';
 import { Parameter } from 'src/parameters/parameter.entity';
 import { DataSource } from 'src/data-sources/data-source.entity';
+import { History } from 'src/history/entities/history.entity';
 import OpenAI from 'openai';
 
 import { DBMetadataExtractor } from 'src/common/utils/db-metadata-extractor';
@@ -18,28 +19,38 @@ export class QuestionsService {
     private parameterRepository: Repository<Parameter>,
     @InjectRepository(DataSource)
     private dataSourceRepository: Repository<DataSource>,
+    @InjectRepository(History)
+    private historyRepository: Repository<History>,
   ) {}
 
-  async askQuestion(question) {
+  async askQuestion(question, user, questionSource) {
     if(question.length < 10 )
       return {error: true, data: "Pergunta inválida"};
 
-    const trainingStatements = await this.trainingStatementRepository.find();
-    const parameter = await this.parameterRepository.findOne({
-      where: { type: 'chatgpt_key' },
-    });
-    const dataSource = await this.dataSourceRepository.find({ take: 1 });
+    try {
+      const trainingStatements = await this.trainingStatementRepository.find();
+      const parameter = await this.parameterRepository.findOne({
+        where: { type: 'chatgpt_key' },
+      });
+      const dataSource = await this.dataSourceRepository.find({ take: 1 });
 
-    const queryStatement = await this.chatGptCall(
-      parameter.value,
-      trainingStatements,
-      question,
-      dataSource[0],
-    );
+      const queryStatement = await this.chatGptCall(
+        parameter.value,
+        trainingStatements,
+        question,
+        dataSource[0],
+      );
 
-    const dataRows = await this.executeStatement(queryStatement, dataSource[0]);
+      const dataRows = await this.executeStatement(queryStatement, dataSource[0]);
 
-    return {error: false, data: dataRows};
+      await this.createQuestionHistory(questionSource, question, user.name, queryStatement);
+
+      return {error: false, data: dataRows};
+    } catch (e) {
+      await this.createErrorHistory(questionSource, question, user.name, e.message);
+
+      return {error: false, data: e.message};
+    }
   }
 
   async slackAskQuestion(question, slackUser) {
@@ -47,7 +58,7 @@ export class QuestionsService {
       return "Parece que você não tem acesso a esse recurso"
     }
 
-    const data = await this.askQuestion(question);
+    const data = await this.askQuestion(question, {name: slackUser},'slack');
 
     if(data['error'] === true)
       return data['data'];
@@ -183,5 +194,27 @@ ${statement.query}
         }
       ]
     }
+  }
+
+  async createErrorHistory(questionSource,questionAsked,questionUsername, questionResponse) {
+    const newRow = await this.historyRepository.create({
+        questionSource,
+        questionAsked,
+        questionUsername,
+        status: 'error',
+        questionResponse,
+      });
+    return await this.historyRepository.save(newRow);
+  }
+
+  async createQuestionHistory(questionSource,questionAsked,questionUsername, questionResponse) {
+    const newRow = await this.historyRepository.create({
+        questionSource,
+        questionAsked,
+        questionUsername,
+        status: 'success',
+        questionResponse,
+      });
+    return await this.historyRepository.save(newRow);
   }
 }
