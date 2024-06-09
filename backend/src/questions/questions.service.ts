@@ -21,6 +21,9 @@ export class QuestionsService {
   ) {}
 
   async askQuestion(question) {
+    if(question.length < 10 )
+      return {error: true, data: "Pergunta inválida"};
+
     const trainingStatements = await this.trainingStatementRepository.find();
     const parameter = await this.parameterRepository.findOne({
       where: { type: 'chatgpt_key' },
@@ -36,7 +39,20 @@ export class QuestionsService {
 
     const dataRows = await this.executeStatement(queryStatement, dataSource[0]);
 
-    return {data: dataRows};
+    return {error: false, data: dataRows};
+  }
+
+  async slackAskQuestion(question, slackUser) {
+    if(slackUser != 'leandrobarreto') {
+      return "Parece que você não tem acesso a esse recurso"
+    }
+
+    const data = await this.askQuestion(question);
+
+    if(data['error'] === true)
+      return data['data'];
+
+    return this.slackOutputFormat(question, data['data']);
   }
 
   async chatGptCall(chatGptKey, statements, question, dataSource) {
@@ -59,6 +75,7 @@ export class QuestionsService {
 
     const fewShot = this.parseFewShots(statements);
     const prompt = this.preparePrompt(fewShot, question, metadata);
+    console.log(prompt);
 
     // const response = await openai.chat.completions.create({
     //   messages: [
@@ -78,12 +95,13 @@ export class QuestionsService {
   preparePrompt(fewshot, question, sqlTables) {
     //Current strategy adapted from https://www.kdnuggets.com/leveraging-gpt-models-to-transform-natural-language-to-sql-queries
     const prompt = `
-Given the following SQL tables, your job is to provide the required SQL tables
+Given the following SQL tables, your job is to provide the required SQL statement
 to fulfill any user request.
 
-Tables: ${sqlTables}. Follow those examples the generate the answer, paying attention to both
+Tables: ${sqlTables}
+` + (fewshot == "" ? "" :  (`Follow those examples the generate the answer, paying attention to both
 the way of structuring queries and its format:
-${fewshot}
+${fewshot}`)) + `
 
 User request: ${question}`;
 
@@ -120,5 +138,50 @@ ${statement.query}
     );
 
     return await dbQueryRunner.executeStatement();
+  }
+
+  slackOutputFormat(question, data) {
+    if((data).length == 0)
+      return "Sem dados para disponibilizar!"
+    const keys = Object.keys(data[0]);
+
+    let csv = keys.join("\t\t") + "\n";
+    data.forEach((row) => {
+      const tRow = []
+      keys.forEach((col) => {
+        tRow.push(row[col]);
+      })
+      csv += tRow.join("\t\t") + "\n"
+    });
+
+    return {
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": question,
+            "emoji": true
+          }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "rich_text",
+          "elements": [
+            {
+              "type": "rich_text_preformatted",
+              "elements": [
+                {
+                  "type": "text",
+                  "text": csv
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   }
 }
