@@ -49,7 +49,7 @@ export class QuestionsService {
     } catch (e) {
       await this.createErrorHistory(questionSource, question, user.name, e.message);
 
-      return {error: false, data: e.message};
+      return {error: true, data: e.message};
     }
   }
 
@@ -86,7 +86,7 @@ export class QuestionsService {
 
     const fewShot = this.parseFewShots(statements);
     const prompt = this.preparePrompt(fewShot, question, metadata);
-    console.log(prompt);
+    // console.log(prompt);
 
     // const response = await openai.chat.completions.create({
     //   messages: [
@@ -97,8 +97,9 @@ export class QuestionsService {
     //   ],
     //   model: 'gpt-3.5-turbo',
     // });
+    // console.log(response.choices[0].message.content)
     // return response.choices[0].message.content;
-    // const query response.choices[0].message.content;
+    // const query = response.choices[0].message.content;
 
     return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
   }
