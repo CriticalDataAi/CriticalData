@@ -102,17 +102,17 @@ export class QuestionsService {
     const prompt = this.preparePrompt(fewShot, question, metadata);
     // console.log(prompt);
 
-    // const response = await openai.chat.completions.create({
-    //   messages: [
-    //     {
-    //       role: 'user',
-    //       content: prompt,
-    //     },
-    //   ],
-    //   model: 'gpt-3.5-turbo',
-    // });
-    // console.log(response.choices[0].message.content)
-    // return response.choices[0].message.content;
+    const response = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+    console.log(response.choices[0].message.content)
+    return response.choices[0].message.content;
     // const query = response.choices[0].message.content;
 
     return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
@@ -122,7 +122,7 @@ export class QuestionsService {
     //Current strategy adapted from https://www.kdnuggets.com/leveraging-gpt-models-to-transform-natural-language-to-sql-queries
     const prompt = `
 Given the following SQL tables, your job is to provide the required SQL statement
-to fulfill any user request.
+to fulfill any user request. The return should contain only a valid SQL statement.
 
 Tables: ${sqlTables}
 ` + (fewshot == "" ? "" :  (`Follow those examples the generate the answer, paying attention to both
