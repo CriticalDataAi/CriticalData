@@ -5,9 +5,16 @@ import { QuestionsService } from './questions.service';
 export class QuestionsSlackController {
   constructor(private readonly questionsService: QuestionsService) {}
 
-  @Post()
+  @Post('question')
   async slackAskQuestion(@Body('text') question, @Body() payload) {
     this.questionsService.slackAskQuestion(question, payload['user_name'], payload['response_url']);
+
+    return ""
+  }
+
+  @Post('actions')
+  async questionAction(@Body('payload') payload) {
+    console.log(payload);
 
     return ""
   }

@@ -48,9 +48,9 @@ export class QuestionsService {
       if( dataRows.length == 0 )
         return {error: true, data: "Sem Dados!"};
 
-      await this.createQuestionHistory(questionSource, question, user.name, queryStatement);
+      const history = await this.createQuestionHistory(questionSource, question, user.name, queryStatement);
 
-      return {error: false, data: dataRows};
+      return {error: false, data: dataRows, execution_id: history.id};
     } catch (e) {
       await this.createErrorHistory(questionSource, question, user.name, e.message);
 
@@ -70,9 +70,14 @@ export class QuestionsService {
       return await this.slackReturn(responseUrl, this.slackErrorOutputFormat(question, data['data']));
     }
 
-    const formatted = this.slackOutputFormat(question, data['data']);
+    const formatted = this.slackOutputFormat(question, data['data'], data['execution_id']);
 
-    await this.slackReturn(responseUrl, formatted);
+    try {
+      await this.slackReturn(responseUrl, formatted);
+    }
+    catch (e) {
+      return await this.slackReturn(responseUrl, this.slackErrorOutputFormat(question, "Houve algum erro, contate o administrador!"));
+    }
   }
 
   async chatGptCall(chatGptKey, statements, question, dataSource) {
@@ -110,7 +115,7 @@ export class QuestionsService {
     // return response.choices[0].message.content;
     // const query = response.choices[0].message.content;
 
-    // return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
+    return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
     return `
       SELECT advogado, sum(valor_requisitado) as total_requisitado
       FROM dim_advogados a
@@ -169,7 +174,7 @@ ${statement.query}
     return await dbQueryRunner.executeStatement();
   }
 
-  slackOutputFormat(question, data) {
+  slackOutputFormat(question, data, historyId) {
     if((data).length == 0)
       return "Sem dados para disponibilizar!"
     const keys = Object.keys(data[0]);
@@ -220,6 +225,49 @@ ${statement.query}
             "type": "plain_text",
             "text": question,
             "emoji": true
+          }
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "plain_text",
+            "text": text,
+            "emoji": true
+          }
+        ]
+      }
+    ]
+  }
+
+  bkp_slackErrorOutputFormat(question, text) {
+    return [
+      {
+          "type": "section",
+          "text": {
+            "type": "plain_text",
+            "text": question,
+            "emoji": true
+          }
+          ,"accessory": {
+            "type": "overflow",
+            "options": [
+              {
+                "text": {
+                  "type": "plain_text",
+                  "text": "Me parece errado!"
+                },
+                "value": "questionable_value"
+              },
+              {
+                "text": {
+                  "type": "plain_text",
+                  "text": "Criar no Metabase"
+                },
+                "value": "create_metabase"
+              }
+            ],
+            "action_id": "question-action"
           }
       },
       {
