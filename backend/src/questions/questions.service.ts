@@ -10,6 +10,8 @@ import OpenAI from 'openai';
 import { DBMetadataExtractor } from 'src/common/utils/db-metadata-extractor';
 import { DBQueryRunner } from 'src/common/utils/db-query-runner';
 
+import axios from 'axios';
+
 @Injectable()
 export class QuestionsService {
   constructor(
@@ -53,7 +55,7 @@ export class QuestionsService {
     }
   }
 
-  async slackAskQuestion(question, slackUser) {
+  async slackAskQuestion(question, slackUser, responseUrl) {
     if(slackUser != 'leandrobarreto') {
       return "Parece que você não tem acesso a esse recurso"
     }
@@ -63,7 +65,19 @@ export class QuestionsService {
     if(data['error'] === true)
       return data['data'];
 
-    return this.slackOutputFormat(question, data['data']);
+    const formatted = this.slackOutputFormat(question, data['data']);
+
+    const api = axios.create({
+      baseURL: responseUrl,
+    });
+
+    const ret = await api.request({
+      url: responseUrl,
+      method: 'POST',
+      data: {
+        "blocks": formatted
+      }
+    });
   }
 
   async chatGptCall(chatGptKey, statements, question, dataSource) {
@@ -166,8 +180,7 @@ ${statement.query}
       csv += tRow.join("\t\t") + "\n"
     });
 
-    return {
-      "blocks": [
+    return [
         {
           "type": "header",
           "text": {
@@ -194,7 +207,6 @@ ${statement.query}
           ]
         }
       ]
-    }
   }
 
   async createErrorHistory(questionSource,questionAsked,questionUsername, questionResponse) {
