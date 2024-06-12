@@ -45,6 +45,9 @@ export class QuestionsService {
 
       const dataRows = await this.executeStatement(queryStatement, dataSource[0]);
 
+      if( dataRows.length == 0 )
+        return {error: true, data: "Sem Dados!"};
+
       await this.createQuestionHistory(questionSource, question, user.name, queryStatement);
 
       return {error: false, data: dataRows};
@@ -62,22 +65,14 @@ export class QuestionsService {
 
     const data = await this.askQuestion(question, {name: slackUser},'slack');
 
-    if(data['error'] === true)
-      return data['data'];
+    if(data['error'] === true){
+      // console.log(this.slackErrorOutputFormat(question, data['data']));
+      return await this.slackReturn(responseUrl, this.slackErrorOutputFormat(question, data['data']));
+    }
 
     const formatted = this.slackOutputFormat(question, data['data']);
 
-    const api = axios.create({
-      baseURL: responseUrl,
-    });
-
-    const ret = await api.request({
-      url: responseUrl,
-      method: 'POST',
-      data: {
-        "blocks": formatted
-      }
-    });
+    await this.slackReturn(responseUrl, formatted);
   }
 
   async chatGptCall(chatGptKey, statements, question, dataSource) {
@@ -102,20 +97,28 @@ export class QuestionsService {
     const prompt = this.preparePrompt(fewShot, question, metadata);
     // console.log(prompt);
 
-    const response = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      model: 'gpt-3.5-turbo',
-    });
-    console.log(response.choices[0].message.content)
-    return response.choices[0].message.content;
+    // const response = await openai.chat.completions.create({
+    //   messages: [
+    //     {
+    //       role: 'user',
+    //       content: prompt,
+    //     },
+    //   ],
+    //   model: 'gpt-3.5-turbo',
+    // });
+    // console.log(response.choices[0].message.content)
+    // return response.choices[0].message.content;
     // const query = response.choices[0].message.content;
 
-    return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
+    // return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
+    return `
+      SELECT advogado, sum(valor_requisitado) as total_requisitado
+      FROM dim_advogados a
+      JOIN fact_precatorios p ON a.dim_advogado_id = p.fk_dim_advogado
+      WHERE p.sistema = 'MUNICIPAL'
+      GROUP BY advogado
+      ORDER BY total_requisitado DESC;
+    `;
   }
 
   preparePrompt(fewshot, question, sqlTables) {
@@ -209,6 +212,29 @@ ${statement.query}
       ]
   }
 
+  slackErrorOutputFormat(question, text) {
+    return [
+      {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": question,
+            "emoji": true
+          }
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "plain_text",
+            "text": text,
+            "emoji": true
+          }
+        ]
+      }
+    ]
+  }
+
   async createErrorHistory(questionSource,questionAsked,questionUsername, questionResponse) {
     const newRow = await this.historyRepository.create({
         questionSource,
@@ -229,5 +255,19 @@ ${statement.query}
         questionResponse,
       });
     return await this.historyRepository.save(newRow);
+  }
+
+  async slackReturn(responseUrl, responseData) {
+    const api = axios.create({
+      baseURL: responseUrl,
+    });
+
+    const ret = await api.request({
+      url: responseUrl,
+      method: 'POST',
+      data: {
+        "blocks": responseData,
+      }
+    });
   }
 }
