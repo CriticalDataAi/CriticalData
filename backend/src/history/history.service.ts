@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHistoryDto } from './dto/create-history.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { History } from './entities/history.entity'
 
 @Injectable()
 export class HistoryService {
-  create(createHistoryDto: CreateHistoryDto) {
-    return 'This action adds a new history';
+  constructor(
+    @InjectRepository(History)
+    private historyRepository: Repository<History>,
+  ) {}
+
+  async findAll(): Promise<History[]> {
+    return this.historyRepository.find();
   }
 
-  findAll() {
-    return `This action returns all history`;
+  async findOne(id: number): Promise<History> {
+    return this.historyRepository.findOne({ where: { id } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} history`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} history`;
-  }
 }
