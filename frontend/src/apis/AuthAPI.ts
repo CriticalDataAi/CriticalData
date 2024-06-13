@@ -1,7 +1,7 @@
 import { api } from "./configs/axiosConfig"
 
 const AuthAPI = {
-    async getToken (email: string, password: string, cancel = false) {
+    async getToken (email: string, password: string) {
         const response = await api.request({
             url: '/auth/login',
             method: "POST",

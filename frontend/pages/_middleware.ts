@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import * as jose from "jose";
-import Cookies from "js-cookie";
 
 export default async function middleware(request: NextRequest) {
   try{

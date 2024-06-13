@@ -1,29 +1,4 @@
-
-import { FC, ChangeEvent, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import {
-  Tooltip,
-  Divider,
-  Box,
-  Card,
-  Checkbox,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableContainer,
-  useTheme,
-  CardHeader
-} from '@mui/material';
-import { useRouter } from 'next/router';
-
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-
-import DeleteConfirmDialog from './delete-dialog';
+import { FC } from 'react';
 
 
 interface JsonTableProps {

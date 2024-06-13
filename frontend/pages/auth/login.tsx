@@ -4,13 +4,8 @@ import Head from 'next/head';
 import React, { useState } from "react";
 import {
   Box,
-  Typography,
-  FormGroup,
-  FormControlLabel,
   Button,
   Stack,
-  Checkbox,
-  Grid,
   TextField,
   Snackbar,
   Alert,
@@ -27,13 +22,7 @@ import Cookies from "js-cookie";
 
 import AuthAPI from "@/apis/AuthAPI";
 
-interface loginType {
-  title?: string;
-  subtitle?: JSX.Element | JSX.Element[];
-  subtext?: JSX.Element | JSX.Element[];
-}
-
-const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
+const AuthLogin = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const router = useRouter();
@@ -77,7 +66,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   });
 
   const handleClose = (
-    event: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: string
   ) => {
     if (reason === "clickaway") {
@@ -90,14 +79,12 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   return (
     <>
       <Head>
-        <title>Cards - Components</title>
+        <title>Login</title>
       </Head>
 
       <Container 
         maxWidth="md"
         style={{ minHeight: '100vh' }}
-        justifyContent="center"
-        direction="column"
       >
       <form onSubmit={formik.handleSubmit}
         style={{ minHeight: '100vh' }}

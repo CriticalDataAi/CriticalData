@@ -36,6 +36,9 @@ export const HistoryAPI = {
 
     return response.data
   },
+  create : function (){},
+  edit : function (){},
+  delete : function (){}
 }
 
 const cancelApiObject = defineCancelApiObject(HistoryAPI)
