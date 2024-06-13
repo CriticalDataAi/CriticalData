@@ -179,13 +179,25 @@ ${statement.query}
       return "Sem dados para disponibilizar!"
     const keys = Object.keys(data[0]);
 
-    let csv = keys.join("\t\t") + "\n";
+    const lineLength = 80;
+    const colLength = Math.floor(lineLength / keys.length);
+
+    let csv = "";
+    keys.forEach((row) => {
+      if(String(row).length > colLength)
+        csv += row.substring(0, colLength);
+      else
+        csv += String(row).padEnd(colLength, " ");
+    })
     data.forEach((row) => {
       const tRow = []
       keys.forEach((col) => {
-        tRow.push(row[col]);
+        if(String(row[col]).length > colLength)
+          tRow.push(row[col].substring(0, colLength));
+        else  
+          tRow.push(String(row[col]).padEnd(colLength, " "));
       })
-      csv += tRow.join("\t\t") + "\n"
+      csv += tRow.join("") + "\n"
     });
 
     return [
