@@ -5,7 +5,7 @@ import getHeader from "./configs/axiosHeader"
 export const ParameterAPI = {
   getParameter: async function (parameter, cancel = false) {
     const response = await api.request({
-      url: `/parameters`,
+      url: `/parameters/${parameter}`,
       method: "GET",
       headers: getHeader(),
       params: {
@@ -14,7 +14,7 @@ export const ParameterAPI = {
       signal: cancel ? cancelApiObject[this.get.name].handleRequestCancellation().signal : undefined,
     })
 
-    return response.data[0]
+    return response.data
   },
   edit: async function (parameter, data, cancel = false) {
     const response = await api.request({

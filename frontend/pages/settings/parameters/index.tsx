@@ -26,6 +26,10 @@ function Parameters() {
   const [showEditGPTKey, setShowEditGPTKey] = useState<boolean>(true);
   const [updatedGPTKey, setUpdatedGPTKey] = useState<string>('APIKEY');
 
+  const [disableEditSlackSigningSecret, setDisableEditSlackSigningSecret] = useState<boolean>(true);
+  const [showEditSlackSigningSecret, setShowEditSlackSigningSecret] = useState<boolean>(true);
+  const [updatedSlackSigningSecret, setUpdatedSlackSigningSecret] = useState<string>('APIKEY');
+
   const handleEditGPTKey = () => {
     setDisableEditGPTKey(false);
     setShowEditGPTKey(false);
@@ -34,6 +38,16 @@ function Parameters() {
   const handleCancelGPTKey = () => {
     setDisableEditGPTKey(true);
     setShowEditGPTKey(true);
+  };
+
+  const handleEditSlackSigningSecret = () => {
+    setDisableEditSlackSigningSecret(false);
+    setShowEditSlackSigningSecret(false);
+  };
+
+  const handleCancelSlackSigningSecret = () => {
+    setDisableEditSlackSigningSecret(true);
+    setShowEditSlackSigningSecret(true);
   };
 
   const handleSubmitGPTKey = () => {
@@ -46,13 +60,30 @@ function Parameters() {
     setShowEditGPTKey(true);
   };
 
+  const handleSubmitSlackSigningSecret = () => {
+    ParameterAPI.edit('slack-signing-secret', {
+      value: updatedSlackSigningSecret,
+      type: 'slack-signing-secret'
+    });
+
+    setDisableEditSlackSigningSecret(true);
+    setShowEditSlackSigningSecret(true);
+  };
+
   const handleKeyChange = (e) => {
     setUpdatedGPTKey(e.target.value);
+  };
+
+  const handleSlackSecretChange = (e) => {
+    setUpdatedSlackSigningSecret(e.target.value);
   };
 
   useEffect(() => {
     ParameterAPI.getParameter('chatgpt_key').then((data) => {
       setUpdatedGPTKey(data.value);
+    });
+    ParameterAPI.getParameter('slack-signing-secret').then((data) => {
+      setUpdatedSlackSigningSecret(data.value);
     });
   }, []);
 
@@ -137,6 +168,66 @@ function Parameters() {
                 {!!!showEditGPTKey && (
                   <ListItem sx={{ width: '12.5%' }}>
                     <Button variant="contained" onClick={handleSubmitGPTKey}>
+                      Save
+                    </Button>
+                  </ListItem>
+                )}
+              </List>
+            </Stack>
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <List component={Box} display="flex" flexGrow={1}>
+                <ListItem sx={{ p: 3, width: '25%' }}>
+                  <ListItemText
+                    primaryTypographyProps={{
+                      variant: 'h5',
+                      gutterBottom: true
+                    }}
+                    secondaryTypographyProps={{
+                      variant: 'subtitle2',
+                      lineHeight: 1
+                    }}
+                    primary="Slack Signing Secret"
+                    secondary="You can change your signing secret here"
+                  />
+                </ListItem>
+                <ListItem sx={{ width: '50%' }}>
+                  <TextField
+                    required
+                    label="ChatGPT API Key"
+                    name="type"
+                    fullWidth
+                    value={updatedSlackSigningSecret}
+                    disabled={disableEditSlackSigningSecret}
+                    onChange={handleSlackSecretChange}
+                  />
+                </ListItem>
+
+                {showEditSlackSigningSecret && (
+                  <ListItem sx={{ width: '25%' }}>
+                    <Button
+                      variant="contained"
+                      startIcon={<EditTwoToneIcon />}
+                      onClick={handleEditSlackSigningSecret}
+                    >
+                      Edit
+                    </Button>
+                  </ListItem>
+                )}
+                {!!!showEditSlackSigningSecret && (
+                  <ListItem sx={{ width: '12.5%' }}>
+                    <Button variant="contained" onClick={handleCancelSlackSigningSecret}>
+                      Cancel
+                    </Button>
+                  </ListItem>
+                )}
+                {!!!showEditSlackSigningSecret && (
+                  <ListItem sx={{ width: '12.5%' }}>
+                    <Button variant="contained" onClick={handleSubmitSlackSigningSecret}>
                       Save
                     </Button>
                   </ListItem>

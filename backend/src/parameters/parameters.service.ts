@@ -18,6 +18,14 @@ export class ParametersService {
     return this.parameterRepository.findOne({ where: { id } });
   }
 
+  async findOneByType(type: string): Promise<Parameter> {
+    const parameter = await this.parameterRepository.findOne({ where: { type } });
+
+    parameter.value = ''.padEnd(parameter.value.length-6,'*') + parameter.value.substring(parameter.value.length - 6,parameter.value.length);
+
+    return parameter;
+  }
+
   async create(data: Partial<Parameter>): Promise<Parameter> {
     const newrow = this.parameterRepository.create(data);
     return this.parameterRepository.save(newrow);

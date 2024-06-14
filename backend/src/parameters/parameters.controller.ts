@@ -16,18 +16,13 @@ import { AuthGuard } from '../auth/auth.guard';
 export class ParametersController {
   constructor(private readonly parametersService: ParametersService) {}
 
-  @Get()
-  async findAll(): Promise<Parameter[]> {
-    return this.parametersService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Parameter> {
-    const dataSource = await this.parametersService.findOne(id);
-    if (!dataSource) {
-      throw new NotFoundException('DataSource does not exist!');
+  @Get(':parameter')
+  async findOne(@Param('parameter') type: string): Promise<Parameter> {
+    const parameter = await this.parametersService.findOneByType(type);
+    if (!parameter) {
+      throw new NotFoundException('Parameter does not exist!');
     } else {
-      return dataSource;
+      return parameter;
     }
   }
 

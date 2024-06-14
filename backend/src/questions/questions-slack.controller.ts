@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, UseGuards } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
+import { SlackGuard } from '../auth/slack.guard';
 
 @Controller('questions-slack')
+@UseGuards(SlackGuard)
 export class QuestionsSlackController {
   constructor(private readonly questionsService: QuestionsService) {}
 
