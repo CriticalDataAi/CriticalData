@@ -242,7 +242,7 @@ ${statement.query}
           "elements": [
             {
               "type": "plain_text",
-              "text": "Mostrando apenas os primeiros 5 registros",
+              "text": `Mostrando apenas os primeiros 5 registros de um total de ${counter}`,
               "emoji": true
             }
           ]
