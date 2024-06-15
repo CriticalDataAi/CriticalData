@@ -115,7 +115,7 @@ export class QuestionsService {
     // return response.choices[0].message.content;
     // const query = response.choices[0].message.content;
 
-    return "select sistema, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
+    return "select deal_status, count(1) cnt, sum(valor_requisitado) valor_requisitado from fact_precatorios fp group by 1;";
     return `
       SELECT advogado, sum(valor_requisitado) as total_requisitado
       FROM dim_advogados a
@@ -183,6 +183,9 @@ ${statement.query}
     const colLength = Math.floor(lineLength / keys.length);
 
     let csv = "";
+    let counter = 0;
+    let returnObject : any = {};
+
     keys.forEach((row) => {
       if(String(row).length > colLength)
         csv += row.substring(0, colLength);
@@ -196,11 +199,14 @@ ${statement.query}
           tRow.push(row[col].substring(0, colLength));
         else  
           tRow.push(String(row[col]).padEnd(colLength, " "));
-      })
-      csv += tRow.join("") + "\n"
+      });
+
+      counter += 1;
+      if( counter <= 5 )
+        csv += tRow.join("") + "\n";
     });
 
-    return [
+    returnObject = [
         {
           "type": "header",
           "text": {
@@ -226,7 +232,25 @@ ${statement.query}
             }
           ]
         }
+    ]
+
+    if( counter > 5 ) {
+      returnObject = [
+        ...returnObject,
+        {
+          "type": "context",
+          "elements": [
+            {
+              "type": "plain_text",
+              "text": "Mostrando apenas os primeiros 5 registros",
+              "emoji": true
+            }
+          ]
+        }
       ]
+    }
+
+    return returnObject;
   }
 
   slackErrorOutputFormat(question, text) {
