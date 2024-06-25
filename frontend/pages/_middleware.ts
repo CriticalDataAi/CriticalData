@@ -4,7 +4,7 @@ import * as jose from "jose";
 
 export default async function middleware(request: NextRequest) {
   try{
-    if (request.url.includes("/login")) {
+    if(request.url.includes("favicon.ico")){
       return NextResponse.next();
     }
 
@@ -13,7 +13,11 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
-    if (!token) {
+    if (token === "" && request.url.includes("/login")) {
+      return NextResponse.next();
+    }
+
+    if (token === "") {
       return NextResponse.redirect(new URL("/auth/login", request.url));
     }
     
@@ -21,6 +25,10 @@ export default async function middleware(request: NextRequest) {
       token,
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
+
+    if (token !== "" && request.url.includes("/login")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
 
   } catch (error: any) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
