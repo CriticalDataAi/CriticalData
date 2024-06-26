@@ -24,6 +24,8 @@ import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 // import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -70,6 +72,8 @@ function HeaderUserbox() {
 
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -143,7 +147,14 @@ function HeaderUserbox() {
         <Divider />
         */}
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
+          <Button color="primary" fullWidth
+            onClick={() => {
+              localStorage.clear();
+              Cookies.remove("auth-token");
+              Cookies.remove("roles");
+              router.push("/auth/login");
+            }}
+          >
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
             Sign out
           </Button>

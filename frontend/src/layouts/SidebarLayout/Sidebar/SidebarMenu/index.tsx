@@ -19,6 +19,7 @@ import MmsTwoToneIcon from '@mui/icons-material/MmsTwoTone';
 // import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
 // import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import BallotTwoToneIcon from '@mui/icons-material/BallotTwoTone';
+import PersonIcon from '@mui/icons-material/Person';
 // import BeachAccessTwoToneIcon from '@mui/icons-material/BeachAccessTwoTone';
 // import EmojiEventsTwoToneIcon from '@mui/icons-material/EmojiEventsTwoTone';
 // import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
@@ -213,6 +214,21 @@ function SidebarMenu() {
         >
           <SubMenuWrapper>
             <List component="div">
+              <ListItem component="div">
+                <NextLink href="/users" passHref>
+                  <Button
+                    className={
+                      currentRoute === '/users' ? 'active' : ''
+                    }
+                    disableRipple
+                    component="a"
+                    onClick={closeSidebar}
+                    startIcon={<PersonIcon />}
+                  >
+                    Users
+                  </Button>
+                </NextLink>
+              </ListItem>
               <ListItem component="div">
                 <NextLink href="/settings/sources" passHref>
                   <Button

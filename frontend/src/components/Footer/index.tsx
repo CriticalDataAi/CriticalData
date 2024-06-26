@@ -1,4 +1,4 @@
-import { Box, Container, Link, Typography, styled } from '@mui/material';
+import { Box, Container, styled } from '@mui/material';
 
 const FooterWrapper = styled(Container)(
   ({ theme }) => `
@@ -16,6 +16,7 @@ function Footer() {
         textAlign={{ xs: 'center', md: 'left' }}
         justifyContent="space-between"
       >
+        {/*
         <Box>
           <Typography variant="subtitle1">
             &copy; 2022 - Tokyo Free Black Next.js Typescript Admin Dashboard
@@ -36,6 +37,7 @@ function Footer() {
             BloomUI.com
           </Link>
         </Typography>
+        */}
       </Box>
     </FooterWrapper>
   );

@@ -7,25 +7,25 @@ import { Grid, Container } from '@mui/material';
 import Footer from '@/components/Footer';
 
 import DataTable from '@/components/DataTable';
-import { HistoryAPI } from '@/apis/HistoryAPI';
+import { UsersAPI } from '@/apis/UsersAPI';
 
-const HistoryModel = [
-  { name: 'questionSource', type: 'string' },
-  { name: 'questionUsername', type: 'string' },
-  { name: 'questionAsked', type: 'string' },
-  { name: 'status', type: 'string' },
-  { name: 'validationStatus', type: 'string' }
+const UserModel = [
+  { name: 'name', type: 'string' },
+  { name: 'email', type: 'string' },
+  { name: 'role', type: 'string' },
+  { name: 'slackUser', type: 'string' },
 ];
 
-function History() {
+function Users() {
   return (
     <>
       <Head>
-        <title>History</title>
+        <title>Users</title>
       </Head>
       <PageTitleWrapper>
         <PageTitle
-          heading="Execution History"
+          heading="Users"
+          docs="/users/create"
         />
       </PageTitleWrapper>
       <Container maxWidth="lg">
@@ -39,8 +39,8 @@ function History() {
         <Grid item xs={12}>
           <DataTable
             title="Execution History"
-            model={HistoryModel}
-            modelAPI={HistoryAPI}
+            model={UserModel}
+            modelAPI={UsersAPI}
           />
         </Grid>
       </Container>
@@ -49,6 +49,6 @@ function History() {
   );
 }
 
-History.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
+Users.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
 
-export default History;
+export default Users;
