@@ -33,9 +33,14 @@ export class UsersService {
 
     if (!reqUser) throw new ForbiddenException();
 
+    if( reqUser.role != 'admin' && reqUser.id != id )
+      throw new ForbiddenException();
+
     const findUser = await this.userRepository.findOne({
       where: { id },
     });
+
+    findUser.password = '*****'
 
     return findUser;
   }
@@ -47,7 +52,12 @@ export class UsersService {
 
     if (!reqUser) throw new ForbiddenException();
 
+    if( reqUser.role != 'admin' )
+      throw new ForbiddenException();
+
     data.password = await this.bcryptAdapter.hash(data.password);
+    data.status = 'active'
+
     const newrow = this.userRepository.create(data);
     return this.userRepository.save(newrow);
   }
@@ -63,11 +73,21 @@ export class UsersService {
 
     if (!reqUser) throw new ForbiddenException();
 
+    if( reqUser.role != 'admin' && reqUser.id != id )
+      throw new ForbiddenException();
+
     const updateUser = await this.userRepository.findOne({
       where: { id },
     });
 
     if (!updateUser) throw new ForbiddenException();
+
+    if( payloadUser.password == '*****' ){
+      delete payloadUser.password;
+    }
+    else {
+      payloadUser.password = await this.bcryptAdapter.hash(payloadUser.password);
+    }
 
     await this.userRepository.update(id, payloadUser);
     return this.userRepository.findOne({ where: { id } });
@@ -79,6 +99,9 @@ export class UsersService {
     });
 
     if (!reqUser) throw new ForbiddenException();
+
+    if( reqUser.role != 'admin' && reqUser.id != id )
+      throw new ForbiddenException();
 
     const deleteUser = await this.userRepository.findOne({
       where: { id },

@@ -41,6 +41,9 @@ export class CreateUserDto {
   status: string;
 
   @IsNotEmpty()
+  slackUser: string;
+
+  @IsNotEmpty()
   salt: string;
 
   @IsNotEmpty()
